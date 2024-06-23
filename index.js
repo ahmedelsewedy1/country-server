@@ -55,8 +55,18 @@ app.get('/:id', async (req, res) => {
             Key: user.image,
         };
         const data = await s3.getObject(params).promise();
-        res.set('Content-Type', data.ContentType);
-        res.send(data.Body);
+        const buffer = Buffer.from(data.Body)
+
+        const responseObject = {
+            fieldname: 'images',
+            originalname: user.image,
+            encoding: '7bit',
+            mimetype: data.ContentType,
+            buffer: buffer,
+            size: buffer.length
+        };
+
+        res.json(responseObject);
 
     } catch (err) {
         res.status(500).send(err.message);
