@@ -36,9 +36,15 @@ app.post('/', uploadMiddleware, async (req, res) => {
         });
         await newUser.save();
 
-        res.send({ message: 'Image uploaded and user data saved successfully' });
+        res.status(200).json({
+            status: 'success',
+            message: 'Image uploaded and user data saved successfully'
+        });
     } catch (err) {
-        res.status(500).send(err.message);
+        res.status(400).json({
+            status: 'error',
+            message: "can't add user"
+        });
     }
 });
 
@@ -48,7 +54,11 @@ app.get('/:id', async (req, res) => {
         const user = await User.findOne({ nationalId });
 
         if (!user)
-            return res.status(404).send('User not found');
+            return res.status(400).json({
+                status: 'error',
+                message: 'user not found',
+                data: null,
+            });
 
         const params = {
             Bucket: process.env.AWS_BUCKET,
@@ -66,7 +76,11 @@ app.get('/:id', async (req, res) => {
             size: buffer.length
         };
 
-        res.json(responseObject);
+        res.status(200).json({
+            status: 'success',
+            message: 'date retrieve successfully',
+            image: responseObject,
+        });
 
     } catch (err) {
         res.status(500).send(err.message);
