@@ -37,7 +37,7 @@ const upload = multer({
             file.path = `media/country/${filename}`
             cb(null, true);
         } else {
-            cb(appError.create('File must be an image', 400), false);
+            cb(new Error('File must be an image', 400), false);
         }
     },
 });
@@ -49,7 +49,7 @@ const uploadMiddleware = (req, res, next) => {
         }
         try {
             if (!req.file && req.method === 'POST') {
-                return next(appError.create('No file uploaded', 400));
+                return next(new Error('No file uploaded', 400));
             }
 
             const user = await User.findOne({ nationalId: req.body.nationalId })
