@@ -31,8 +31,8 @@ const s3 = new AWS.S3()
 app.post('/', uploadMiddleware, async (req, res) => {
     try {
         const newUser = new User({
-            nationalId: req.body.nationalId,
-            image: req.file.path
+            image: req.file.path,
+            ...req.body
         });
         await newUser.save();
 
@@ -75,10 +75,11 @@ app.get('/:id', async (req, res) => {
             buffer: buffer,
             size: buffer.length
         };
-
+        const userObj = user.toObject()
         res.status(200).json({
             status: 'success',
             message: 'date retrieve successfully',
+            ...userObj,
             image: responseObject,
         });
 
